@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-
 <script>
-  const API_URL = https://script.google.com/macros/s/AKfycbzFdIiYS4p9bW2JT0UHmq423GdPHDkqIplsayjoI3mVxvNskvYdVQzs0vZCD8-feF30/exec";
+  window.API_URL = "https://script.google.com/macros/s/AKfycbzFdIiYS4p9bw2JT0UHmq423GdPHDkqIplsayjoI3mVxvNskvYdVQzs0vZCD8-feF30/exec";
   const _urlParams = new URLSearchParams(window.location.search);
-  window.AUTO_U = _urlParams.get('u') || '';
-  window.AUTO_P = _urlParams.get('p') || '';
+  window.AUTO_U = _urlParams.get("u") || "";
+  window.AUTO_P = _urlParams.get("p") || "";
 
   window.google = {
     script: {
@@ -14,25 +13,25 @@
         function makeRunner(sCb, fCb) {
           return new Proxy({}, {
             get: function(_, prop) {
-              if (prop === 'withSuccessHandler') return function(cb) { return makeRunner(cb, fCb); };
-              if (prop === 'withFailureHandler') return function(cb) { return makeRunner(sCb, cb); };
+              if (prop === "withSuccessHandler") return function(cb) { return makeRunner(cb, fCb); };
+              if (prop === "withFailureHandler") return function(cb) { return makeRunner(sCb, cb); };
               return function(...args) {
-                fetch(API_URL, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                fetch(window.API_URL, {
+                  method: "POST",
+                  headers: { "Content-Type": "text/plain;charset=utf-8" },
                   body: JSON.stringify({ action: prop, args: args }),
-                  redirect: 'follow'
+                  redirect: "follow"
                 })
                 .then(r => r.json())
                 .then(res => {
                   if (res && res.success) { if (sCb) sCb(res.data); }
                   else {
-                    const err = new Error((res && res.error) || 'Lỗi máy chủ');
+                    const err = new Error((res && res.error) || "Lỗi máy chủ");
                     if (fCb) fCb(err); else console.error(err);
                   }
                 })
                 .catch(err => {
-                  if (fCb) fCb(err); else console.error('Lỗi kết nối API:', err);
+                  if (fCb) fCb(err); else console.error("Lỗi API:", err);
                 });
               };
             }
@@ -43,6 +42,7 @@
     }
   };
 </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Ánh Dương - Hệ Thống Quản Lý</title>
@@ -2361,8 +2361,8 @@
 </div>
 
 <script>
-  // AUTO_U đã lấy từ URL
-  // AUTO_P đã lấy từ URL
+  var AUTO_U = window.AUTO_U;
+  var AUTO_P = window.AUTO_P;
   window.addEventListener('DOMContentLoaded', function() {
     if (AUTO_U && AUTO_P) {
       document.getElementById('u').value = AUTO_U;
