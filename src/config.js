@@ -1,4 +1,4 @@
-export const API_URL = "https://script.google.com/macros/s/AKfycbzFdIiYS4p9bw2JT0UHmq423GdPHDkqIplsayjoI3mVxvNskvYdVQzs0vZCD8-feF30/exec";
+export const API_URL = "https://script.google.com/macros/s/AKfycbzFdIiYS4p9bW2JT0UHmq423GdPHDkqIplsayjoI3mVxvNskvYdVQzs0vZCD8-feF30/exec"
 
 export const COMPANY_INFO = {
   name: "CÔNG TY TNHH THIẾT BỊ KIM KHÍ ÁNH DƯƠNG",
