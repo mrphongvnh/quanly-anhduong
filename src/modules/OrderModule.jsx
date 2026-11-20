@@ -54,9 +54,10 @@ export default function OrderModule({ user, appData, editingOrder, clearEditingO
       .slice(0, 25);
   }, [appData.customers, custQuery]);
 
+  // Chỉ lọc và sổ sản phẩm khi có nhập từ khóa vào ô tìm sản phẩm
   const filteredProducts = useMemo(() => {
     const q = bodau(prodQuery);
-    if (!q) return appData.products.slice(0, 30);
+    if (!q) return [];
     return appData.products
       .filter((p) => bodau(p.name).includes(q) || bodau(p.code).includes(q))
       .slice(0, 40);
@@ -304,55 +305,61 @@ export default function OrderModule({ user, appData, editingOrder, clearEditingO
             type="text"
             value={prodQuery}
             onChange={(e) => setProdQuery(e.target.value)}
-            placeholder="Tìm tên sản phẩm hoặc mã SP (hỗ trợ không dấu)..."
+            placeholder="Gõ tên sản phẩm hoặc mã SP để tìm (hỗ trợ không dấu)..."
             className="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-blue-600 outline-none"
           />
         </div>
 
-        <div className="max-h-64 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl">
-          {filteredProducts.map((p) => {
-            const stock = Number(p.stock || 0);
-            const badgeClass =
-              stock <= 0
-                ? "bg-red-100 text-red-700"
-                : stock < 10
-                ? "bg-amber-100 text-amber-800"
-                : "bg-emerald-100 text-emerald-700";
+        {prodQuery.trim() && (
+          <div className="max-h-64 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl">
+            {filteredProducts.length === 0 ? (
+              <div className="p-4 text-center text-xs text-slate-400">Không tìm thấy sản phẩm phù hợp</div>
+            ) : (
+              filteredProducts.map((p) => {
+                const stock = Number(p.stock || 0);
+                const badgeClass =
+                  stock <= 0
+                    ? "bg-red-100 text-red-700"
+                    : stock < 10
+                    ? "bg-amber-100 text-amber-800"
+                    : "bg-emerald-100 text-emerald-700";
 
-            return (
-              <div key={p.code} className="p-2.5 flex items-center justify-between hover:bg-slate-50 gap-2">
-                <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                  <input
-                    type="checkbox"
-                    checked={!!multiChecked[p.code]}
-                    onChange={(e) =>
-                      setMultiChecked((prev) => ({ ...prev, [p.code]: e.target.checked }))
-                    }
-                    className="w-5 h-5 rounded text-blue-600 shrink-0"
-                  />
-                  <div
-                    onClick={() => addProductToCart(p)}
-                    className="cursor-pointer flex-1 min-w-0"
-                  >
-                    <div className="font-medium text-slate-800 text-sm truncate">{p.name}</div>
-                    <div className="flex items-center gap-2 mt-0.5 text-xs">
-                      <span className="text-blue-700 font-bold">{formatMoney(p.price)} đ</span>
-                      <span className={`px-2 py-0.5 rounded-full font-medium ${badgeClass}`}>
-                        Kho: {stock}
-                      </span>
+                return (
+                  <div key={p.code} className="p-2.5 flex items-center justify-between hover:bg-slate-50 gap-2">
+                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={!!multiChecked[p.code]}
+                        onChange={(e) =>
+                          setMultiChecked((prev) => ({ ...prev, [p.code]: e.target.checked }))
+                        }
+                        className="w-5 h-5 rounded text-blue-600 shrink-0"
+                      />
+                      <div
+                        onClick={() => addProductToCart(p)}
+                        className="cursor-pointer flex-1 min-w-0"
+                      >
+                        <div className="font-medium text-slate-800 text-sm truncate">{p.name}</div>
+                        <div className="flex items-center gap-2 mt-0.5 text-xs">
+                          <span className="text-blue-700 font-bold">{formatMoney(p.price)} đ</span>
+                          <span className={`px-2 py-0.5 rounded-full font-medium ${badgeClass}`}>
+                            Kho: {stock}
+                          </span>
+                        </div>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => addProductToCart(p)}
+                      className="p-2 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg transition shrink-0"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
                   </div>
-                </div>
-                <button
-                  onClick={() => addProductToCart(p)}
-                  className="p-2 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg transition shrink-0"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
-            );
-          })}
-        </div>
+                );
+              })
+            )}
+          </div>
+        )}
       </div>
 
       {checkedCount > 0 && (
@@ -459,4 +466,3 @@ export default function OrderModule({ user, appData, editingOrder, clearEditingO
     </div>
   );
 }
-
